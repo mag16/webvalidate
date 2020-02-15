@@ -26,7 +26,7 @@ Validation files are located in the src/TestFiles directory and are json files t
   - Code (required)
     - http status code
     - default: 200
-    - valid: 200-599
+    - valid: 100-599
   - ContentType (required)
     - MIME type
     - default: application/json
