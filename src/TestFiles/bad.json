@@ -1,10 +1,12 @@
 [
+  {"Url":"/version"},
+  {"Url":"/version","Validation":{"ContentType":"text/plain"}},
   {"Url":"/api/movies?year=foo","PerfTarget":{"Category": "SearchMovies"},"Validation":{"Code":400,"ContentType":"text/plain"}},
   {"Url":"/api/movies?year=-1","PerfTarget":{"Category": "SearchMovies"},"Validation":{"Code":400,"ContentType":"text/plain"}},
   {"Url":"/api/movies?year=0","PerfTarget":{"Category": "SearchMovies"},"Validation":{"Code":400,"ContentType":"text/plain"}},
   {"Url":"/api/movies?year=1","PerfTarget":{"Category": "SearchMovies"},"Validation":{"Code":400,"ContentType":"text/plain"}},
-  {"Url":"/api/movies?year=2021","PerfTarget":{"Category": "SearchMovies"},"Validation":{"Code":400,"ContentType":"text/plain",}},
-  {"Url":"/api/movies?year=1989","PerfTarget":{"Category": "SearchMovies"},"Validation":{"Code":400,"ContentType":"text/plain",}},
+  {"Url":"/api/movies?year=2021","PerfTarget":{"Category": "SearchMovies"},"Validation":{"Code":400,"ContentType":"text/plain"}},
+  {"Url":"/api/movies?year=1989","PerfTarget":{"Category": "SearchMovies"},"Validation":{"Code":400,"ContentType":"text/plain"}},
 
   {"Url":"/api/movies?pagesize=1001","PerfTarget":{"Category": "SearchMovies"},"Validation":{"Code":200,"ContentType":"application/json","JsonArray":{"Count":1001}}},
 

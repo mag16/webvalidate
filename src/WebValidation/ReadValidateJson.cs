@@ -29,16 +29,10 @@ namespace WebValidation
                 }
             }
 
-            // throw exception if can't read the json files
-            if (fullList == null || fullList.Count == 0)
+            // return null if can't read the json files
+            if (fullList == null || fullList.Count == 0 || !ValidateJson(fullList))
             {
-                throw new FileLoadException("Unable to read input files");
-            }
-
-            // throw exception if invalid request / rule
-            if (!ValidateJson(fullList, out string message))
-            {
-                throw new FileLoadException($"Invalid json: {message}");
+                return null;
             }
 
             // return sorted list
@@ -111,7 +105,6 @@ namespace WebValidation
                             }
                         }
 
-                        r.Index = l2.Count;
                         l2.Add(r);
                     }
                     // success
@@ -134,21 +127,39 @@ namespace WebValidation
         /// Validate all of the rules
         /// </summary>
         /// <param name="requests">list of Request</param>
-        /// <param name="message">out string error message</param>
         /// <returns></returns>
-        public bool ValidateJson(List<Request> requests, out string message)
+        public static bool ValidateJson(List<Request> requests)
         {
+            // null check
+            if (requests == null)
+            {
+                Console.WriteLine("cannot validate null request");
+                return false;
+            }
+
+            int ndx = 0;
+
             // validate each rule
             foreach (Request r in requests)
             {
-                if (!ValidateRequest(r, out message))
+                if (!ValidateRequest(r, out string message))
                 {
+                    Console.WriteLine($"Error: Invalid json\n\t{JsonConvert.SerializeObject(r, Formatting.None)}\n\t{message}");
                     return false;
+                }
+
+                // set the index property
+                r.Index = ndx;
+                ndx++;
+
+                // default sort order
+                if (r.SortOrder == null)
+                {
+                    r.SortOrder = 100;
                 }
             }
 
             // validated
-            message = string.Empty;
             return true;
         }
 
@@ -158,13 +169,34 @@ namespace WebValidation
         /// <param name="r">Request</param>
         /// <param name="message">out string error message</param>
         /// <returns></returns>
-        public bool ValidateRequest(Request r, out string message)
+        public static bool ValidateRequest(Request r, out string message)
         {
             // null check
-            if (r == null || r.Validation == null)
+            if (r == null)
             {
                 message = "cannot validate null request";
                 return false;
+            }
+
+            // url is required
+            if (string.IsNullOrWhiteSpace(r.Url))
+            {
+                message = "url: url is required";
+                return false;
+            }
+
+            // url must begin with /
+            if (!r.Url.StartsWith("/", StringComparison.OrdinalIgnoreCase))
+            {
+                message = "url: url must begin with /";
+                return false;
+            }
+
+            // nothing to check
+            if (r.Validation == null)
+            {
+                message = string.Empty;
+                return true;
             }
 
             // validate http status code
@@ -193,7 +225,7 @@ namespace WebValidation
         /// <param name="rule">JsonArray</param>
         /// <param name="message">error message</param>
         /// <returns>bool success (out message)</returns>
-        public bool ValidateRequestJsonArray(JsonArray rule, out string message)
+        public static bool ValidateRequestJsonArray(JsonArray rule, out string message)
         {
             // null check
             if (rule == null)

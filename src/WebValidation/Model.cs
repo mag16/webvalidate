@@ -6,16 +6,14 @@ namespace WebValidation
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "can't be read-only - json serialization")]
     public class Request
     {
-        public int SortOrder { get; set; } = 100;
+        public int? SortOrder { get; set; }
         public int? Index { get; set; }
         public string Verb { get; set; } = "GET";
         public string Url { get; set; }
         public string Body { get; set; } = null;
-
         public PerfTarget PerfTarget { get; set; }
-
-        public List<Header> Headers { get; set; } = null;
-        public Validation Validation { get; set; } = new Validation();
+        public List<Header> Headers { get; set; }
+        public Validation Validation { get; set; }
     }
 
     public class PerfLog
@@ -24,7 +22,6 @@ namespace WebValidation
         public string Category { get; set; }
         public int PerfLevel { get; set; }
         public bool Validated { get; set; } = true;
-
         public string Body { get; set; } = string.Empty;
         public string ValidationResults { get; set; } = string.Empty;
         public double Duration { get; set; }
@@ -74,9 +71,9 @@ namespace WebValidation
 
     public class JsonArray
     {
+        public bool CountIsZero { get; set; }
+        public int Count { get; set; }
         public int MinCount { get; set; }
         public int MaxCount { get; set; }
-        public int Count { get; set; }
-        public bool CountIsZero { get; set; }
     }
 }
