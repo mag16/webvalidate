@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 
@@ -192,9 +193,9 @@ namespace WebValidation
             }
 
             // validate http status code
-            if (r.Validation.Code < 200 || r.Validation.Code > 599)
+            if (r.Validation.Code < 100 || r.Validation.Code > 599)
             {
-                message = "statusCode: invalid status code: " + r.Validation.ToString();
+                message = "statusCode: invalid status code: " + r.Validation.Code.ToString(CultureInfo.InvariantCulture);
                 return false;
             }
 
