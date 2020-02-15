@@ -8,11 +8,9 @@ namespace WebValidation
     {
         public int? SortOrder { get; set; }
         public int? Index { get; set; }
-        public string Verb { get; set; } = "GET";
+        public string Verb { get; set; }
         public string Url { get; set; }
-        public string Body { get; set; } = null;
         public PerfTarget PerfTarget { get; set; }
-        public List<Header> Headers { get; set; }
         public Validation Validation { get; set; }
     }
 

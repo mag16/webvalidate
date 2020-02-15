@@ -16,7 +16,7 @@ docker run -it --rm retaildevcrew/webvalidate --host https://www.microsoft.com -
 Validation files are located in the src/TestFiles directory and are json files that control the validation tests.
 
 - Url (required)
-  - path to resource (do not include http[s] or dns name)
+  - path to resource (do not include http or dns name)
   - valid: must begin with /
 - Verb
   - default: GET
@@ -79,6 +79,57 @@ Validation files are located in the src/TestFiles directory and are json files t
   - Targets[3]
     - maximum quartile value in ascending order
 
+## Sample json
+
+```json
+
+{
+    "Url":"/version",
+    "Validation":{
+        "Code":200,
+        "ContentType":"text/plain"
+    }
+}
+
+{
+    "Url":"/healthz",
+    "PerfTarget":{
+        "Category":"healthz"
+    },
+    "Validation":{
+        "ContentType":"text/plain",
+        "ExactMatch":{
+            "Value":"pass"
+        }
+    }
+}
+
+{
+    "Url":"/healthz/ietf",
+    "PerfTarget":{
+        "Category":"healthz"
+    },
+    "Validation":{
+        "ContentType":"application/health+json",
+        "JsonObject":[{
+            "Field":"status","Value":"pass"
+        }]
+    }
+}
+
+{
+    "Url":"/api/actors",
+    "PerfTarget":{
+        "Category":"PagedRead"
+    },
+    "Validation":{
+        "JsonArray":{
+            "Count":100
+        }
+    }
+}
+
+```
 
 ## Contributing
 

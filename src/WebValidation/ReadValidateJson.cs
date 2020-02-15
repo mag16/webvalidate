@@ -23,13 +23,14 @@ namespace WebValidation
             {
                 list = ReadJson(inputFile);
 
+                // add contents to full list
                 if (list != null && list.Count > 0)
                 {
                     fullList.AddRange(list);
                 }
             }
 
-            // return null if can't read the json files
+            // return null if can't read and validate the json files
             if (fullList == null || fullList.Count == 0 || !ValidateJson(fullList))
             {
                 return null;
@@ -128,15 +129,8 @@ namespace WebValidation
         /// </summary>
         /// <param name="requests">list of Request</param>
         /// <returns></returns>
-        public static bool ValidateJson(List<Request> requests)
+        private static bool ValidateJson(List<Request> requests)
         {
-            // null check
-            if (requests == null)
-            {
-                Console.WriteLine("cannot validate null request");
-                return false;
-            }
-
             int ndx = 0;
 
             // validate each rule
@@ -144,15 +138,21 @@ namespace WebValidation
             {
                 if (!ValidateRequest(r, out string message))
                 {
-                    Console.WriteLine($"Error: Invalid json\n\t{JsonConvert.SerializeObject(r, Formatting.None)}\n\t{message}");
+                    Console.WriteLine($"Error: Invalid json\n\t{JsonConvert.SerializeObject(r, Formatting.None, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore })}\n\t{message}");
                     return false;
+                }
+
+                // set default verb
+                if (r.Verb == null)
+                {
+                    r.Verb = "GET";
                 }
 
                 // set the index property
                 r.Index = ndx;
                 ndx++;
 
-                // default sort order
+                // set default sort order
                 if (r.SortOrder == null)
                 {
                     r.SortOrder = 100;
@@ -169,7 +169,7 @@ namespace WebValidation
         /// <param name="r">Request</param>
         /// <param name="message">out string error message</param>
         /// <returns></returns>
-        public static bool ValidateRequest(Request r, out string message)
+        private static bool ValidateRequest(Request r, out string message)
         {
             // null check
             if (r == null)
@@ -178,17 +178,15 @@ namespace WebValidation
                 return false;
             }
 
-            // url is required
-            if (string.IsNullOrWhiteSpace(r.Url))
+            // validate the request path
+            if (!ValidateRequestPath(r.Url, out message))
             {
-                message = "url: url is required";
                 return false;
             }
 
-            // url must begin with /
-            if (!r.Url.StartsWith("/", StringComparison.OrdinalIgnoreCase))
+            // validate the verb
+            if (!ValidateRequestVerb(r.Verb, out message))
             {
-                message = "url: url must begin with /";
                 return false;
             }
 
@@ -220,12 +218,59 @@ namespace WebValidation
         }
 
         /// <summary>
+        /// validate the request HTTP verb
+        /// </summary>
+        /// <param name="verb">string</param>
+        /// <param name="message">out string error message</param>
+        /// <returns></returns>
+        private static bool ValidateRequestVerb(string verb, out string message)
+        {
+            // verb must be in this list
+            if (!(new List<string> { "GET", "HEAD", "POST", "PUT", "DELETE", "TRACE", "OPTIONS", "CONNECT", "PATCH"}).Contains(verb))
+            {
+                message = "verb: invalid verb: " + verb;
+                return false;
+            }
+
+            // validated
+            message = string.Empty;
+            return true;
+        }
+
+        /// <summary>
+        /// validate request path
+        /// </summary>
+        /// <param name="path">string</param>
+        /// <param name="message">out string error message</param>
+        /// <returns></returns>
+        private static bool ValidateRequestPath(string path, out string message)
+        {
+            // url is required
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                message = "url: url is required";
+                return false;
+            }
+
+            // url must begin with /
+            if (!path.StartsWith("/", StringComparison.OrdinalIgnoreCase))
+            {
+                message = "url: url must begin with /";
+                return false;
+            }
+
+            // validated
+            message = string.Empty;
+            return true;
+        }
+
+        /// <summary>
         /// Validate the json array rules
         /// </summary>
         /// <param name="rule">JsonArray</param>
         /// <param name="message">error message</param>
         /// <returns>bool success (out message)</returns>
-        public static bool ValidateRequestJsonArray(JsonArray rule, out string message)
+        private static bool ValidateRequestJsonArray(JsonArray rule, out string message)
         {
             // null check
             if (rule == null)
