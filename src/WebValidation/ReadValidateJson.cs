@@ -142,12 +142,6 @@ namespace WebValidation
                     return false;
                 }
 
-                // set default verb
-                if (r.Verb == null)
-                {
-                    r.Verb = "GET";
-                }
-
                 // set the index property
                 r.Index = ndx;
                 ndx++;

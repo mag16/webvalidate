@@ -6,12 +6,12 @@ namespace WebValidation
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "can't be read-only - json serialization")]
     public class Request
     {
-        public int? SortOrder { get; set; }
-        public int? Index { get; set; }
-        public string Verb { get; set; }
+        public string Verb { get; set; } = "GET";
         public string Url { get; set; }
         public PerfTarget PerfTarget { get; set; }
         public Validation Validation { get; set; }
+        public int? SortOrder { get; set; }
+        public int? Index { get; set; }
     }
 
     public class PerfLog
