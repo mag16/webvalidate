@@ -199,9 +199,9 @@ namespace WebValidation
                     List<dynamic> resList = JsonConvert.DeserializeObject<List<dynamic>>(body) as List<dynamic>;
 
                     // validate count
-                    if (r.Validation.JsonArray.Count > 0 && r.Validation.JsonArray.Count != resList.Count)
+                    if (r.Validation.JsonArray.Count != resList.Count)
                     {
-                        res += string.Format(CultureInfo.InvariantCulture, $"\tJsonCount: {r.Validation.JsonArray.Count}  Actual: {resList.Count}\n");
+                        res += string.Format(CultureInfo.InvariantCulture, $"\tJsonArrayCount: {resList.Count} Expected: {r.Validation.JsonArray.Count}\n");
                     }
 
                     // validate count is zero
