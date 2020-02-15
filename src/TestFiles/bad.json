@@ -1,5 +1,4 @@
 [
-  {"Url":"/version"},
   {"Url":"/version","Validation":{"ContentType":"text/plain"}},
   {"Url":"/api/movies?year=foo","PerfTarget":{"Category": "SearchMovies"},"Validation":{"Code":400,"ContentType":"text/plain"}},
   {"Url":"/api/movies?year=-1","PerfTarget":{"Category": "SearchMovies"},"Validation":{"Code":400,"ContentType":"text/plain"}},
