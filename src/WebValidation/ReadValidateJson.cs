@@ -215,6 +215,13 @@ namespace WebValidation
             }
             else
             {
+                // must be >= 0 (0 is default
+                if (rule.Count < 0 || rule.MinCount < 0 || rule.MaxCount < 0)
+                {
+                    message = "jsonArray: count parameters must be >= 0";
+                    return false;
+                }
+
                 // no rules
                 if (rule.Count == 0 && rule.MinCount == 0 && rule.MaxCount == 0)
                 {
