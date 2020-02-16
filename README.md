@@ -11,9 +11,12 @@ docker run -it --rm retaildevcrew/webvalidate --host https://www.microsoft.com -
 
 ```
 
-## Test Validation
+## Test Validation Files
 
 Validation files are located in the src/TestFiles directory and are json files that control the validation tests.
+
+- HTTP redirects are not followed
+- The test files must parse and validate or no tests will be executed
 
 - Url (required)
   - path to resource (do not include http or dns name)
@@ -50,6 +53,7 @@ Validation files are located in the src/TestFiles directory and are json files t
       - valid: non-empty string
   - JsonArray
     - valid: parses into json array
+    - valid: checks may not be combined unless noted
     - Count
       - exact number of items
       - Valid: > 0
@@ -75,17 +79,93 @@ Validation files are located in the src/TestFiles directory and are json files t
 - PerfTarget (optional)
   - Category
     - used to group requests into categories for reporting
+    - see helium examples below
     - valid: non-empty string
   - Targets[3]
     - maximum quartile value in ascending order
 
 ## Sample json
 
+### Sample microsoft.com validation tests
+
+The msft.json file contains sample validation tests that will will successfully run against the ```https://www.microsoft.com/``` endpoint (assuming content hasn't changed)
+
+- note that http status codes are not specified when 200 is expected
+- note that ContentType is not specified when the default of application/json is expected
+
+#### Redirect from home page
+
+- Note that redirects are not followed
+
+```json
+
+{
+  "Url":"/",
+  "Validation":
+  {
+    "Code":302
+  }
+}
+
+```
+
+#### home page (en-us)
+
+```json
+
+{
+  "Url":"/en-us",
+  "Validation":
+  {"
+    ContentType":"text/html",
+    "Contains":
+    [
+      { "Value":"<title>Microsoft - Official Home Page</title>" },
+      { "Value":"<head data-info=\"{" }
+    ]
+  }
+}
+
+```
+
+#### favicon
+
+```json
+{
+  "Url": "/favicon.ico",
+  "Validation":
+  {
+    "ContentType":"image/x-icon"
+  }
+}
+```
+
+#### robots.txt
+
+```json
+{
+  "Url": "/robots.txt",
+  "Validation":
+  {
+    "ContentType": "text/plain",
+    "MinLength": 200,
+    "Contains":
+    [
+      { "Value": "User-agent: *" },
+      { "Value": "Disallow: /en-us/windows/si/matrix.html"}
+    ]
+  }
+}
+```
+
+### Sample helium tests
+
 ```json
 
 {
     "Url":"/version",
-    "Validation":{
+    "Validation":
+    {
         "Code":200,
         "ContentType":"text/plain"
     }
@@ -93,12 +173,15 @@ Validation files are located in the src/TestFiles directory and are json files t
 
 {
     "Url":"/healthz",
-    "PerfTarget":{
+    "PerfTarget":
+    {
         "Category":"healthz"
     },
-    "Validation":{
+    "Validation":
+    {
         "ContentType":"text/plain",
-        "ExactMatch":{
+        "ExactMatch":
+        {
             "Value":"pass"
         }
     }
@@ -106,24 +189,33 @@ Validation files are located in the src/TestFiles directory and are json files t
 
 {
     "Url":"/healthz/ietf",
-    "PerfTarget":{
+    "PerfTarget":
+    {
         "Category":"healthz"
     },
-    "Validation":{
+    "Validation":
+    {
         "ContentType":"application/health+json",
-        "JsonObject":[{
-            "Field":"status","Value":"pass"
-        }]
+        "JsonObject":
+        [
+          {
+            "Field":"status",
+            "Value":"pass"
+          }
+        ]
     }
 }
 
 {
     "Url":"/api/actors",
-    "PerfTarget":{
+    "PerfTarget":
+    {
         "Category":"PagedRead"
     },
-    "Validation":{
-        "JsonArray":{
+    "Validation":
+    {
+        "JsonArray":
+        {
             "Count":100
         }
     }
