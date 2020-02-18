@@ -223,6 +223,16 @@ The msft.json file contains sample validation tests that will will successfully 
 
 ```
 
+### For a sample check
+```
+foreach (id in movies.id)
+{
+    //your logic here
+}
+
+
+```
+
 ## Contributing
 
 This project welcomes contributions and suggestions. Most contributions require you to agree to a
